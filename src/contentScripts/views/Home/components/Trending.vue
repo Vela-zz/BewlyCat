@@ -163,7 +163,7 @@ defineExpose({ initData })
     :grid-layout="gridLayout"
     :loading="isLoading"
     :no-more-content="noMoreContent"
-    :transform-item="(item: VideoElement) => filterFunc.value && item.item ? filterFunc.value(item.item) ? item.displayData : undefined : item.displayData"
+    :transform-item="(item: VideoElement) => filterFunc && item.item ? filterFunc(item.item) ? item.displayData : undefined : item.displayData"
     :get-item-key="(item: VideoElement) => item.uniqueId"
     show-preview
     @refresh="initData"
