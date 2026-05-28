@@ -343,7 +343,7 @@ provide('getVideoType', () => props.type!)
 <template>
   <div
     :ref="(el) => logic.cardRootRef.value = el as HTMLElement"
-    class="video-card-container"
+    class="video-card-container theme-zzz"
     duration-300 ease-in-out
     rounded="$bew-radius"
     :class="[

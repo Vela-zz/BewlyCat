@@ -1,0 +1,382 @@
+/**
+ * Zenless Zone Zero (ZZZ) Video Card Theme
+ *
+ * Based on the local zenless-ui clone (packages/card/card.scss + var.scss):
+ *
+ * Layout (top → bottom):
+ *   1. Cover / video snapshot
+ *   2. Author avatar  — half floats OVER the cover (absolute-positioned)
+ *      Author name    — sits beside the avatar, in the info section
+ *   3. ──── gray separator ────
+ *   4. Video title
+ *   5. Tags
+ *
+ * Key zenless-ui values:
+ *   card:   border: 2px solid #000; border-radius: 20px 20px 0 20px;
+ *           background: #222; overflow: hidden;
+ *   image:  no own border-radius (card clips it)
+ *   avatar: 52px circle; border: 2px solid #222 (ring); overflows 22px up
+ *   nick:   color: #636363; border-bottom: 2px solid #353535
+ *   title:  color: #fff
+ *   bg:     grid-pattern: 65°/115° lines, 8×14px tile, 4px/7px offset
+ */
+
+/* ─── CSS tokens ──────────────────────────────────────────────────────── */
+.theme-zzz {
+  --zzz-bg-card: #222222; /* .z-card background: #222              */
+  --zzz-bg-card-hover: #2a2a2a;
+  --zzz-bg-cover: #4b4b4b; /* .z-card__image placeholder: #4b4b4b   */
+  --zzz-border: #000000; /* .z-card border: $--color-black        */
+  --zzz-border-hover: #333333;
+  --zzz-border-width: 4px;
+  --zzz-separator: #353535; /* .z-card__nickname border-bottom       */
+
+  --zzz-radius-card: 20px 20px 0 20px;
+
+  --zzz-text-title: #ffffff;
+  --zzz-text-title-hover: #55b4e4;
+  --zzz-text-secondary: #636363; /* .z-card__nickname color               */
+  --zzz-text-content: #b4b4b4; /* .z-card__content color                */
+
+  --zzz-avatar-size: 48px; /* avatar diameter                       */
+
+  /* Badge palette — ZZZ element colors from var.scss */
+  --zzz-badge-inquiry-bg: #f5c14f;
+  --zzz-badge-inquiry-text: #18181b;
+  --zzz-badge-fire-bg: #ff5522;
+  --zzz-badge-fire-text: #ffffff;
+  --zzz-badge-electric-bg: #2eb6ff;
+  --zzz-badge-electric-text: #ffffff;
+  --zzz-badge-ether-bg: #fe427e;
+  --zzz-badge-ether-text: #ffffff;
+  --zzz-badge-neutral-bg: #1c1c1c;
+  --zzz-badge-neutral-text: #888898;
+  --zzz-badge-neutral-border: #2a2a2a;
+}
+
+/* ─── Page background (grid-pattern-background from zenless-ui var.scss) ─ */
+/*
+ * Adapted for dark mode: white lines (rgba 0.04) instead of black.
+ * 65° + 115° angles, 8×14px tile, second pass offset 4px/7px (half tile).
+ * Applied to .bewly-scroll-viewport so the texture covers the full page.
+ */
+.bewly-scroll-viewport:has(.theme-zzz) {
+  background-color: #0d0d0d !important;
+  background-image:
+    linear-gradient(65deg, rgba(255, 255, 255, 0.04) 12%, transparent 0 88%, rgba(255, 255, 255, 0.04) 0),
+    linear-gradient(65deg, rgba(255, 255, 255, 0.04) 12%, transparent 0 88%, rgba(255, 255, 255, 0.04) 0),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.04) 12%, transparent 0 88%, rgba(255, 255, 255, 0.04) 0),
+    linear-gradient(115deg, rgba(255, 255, 255, 0.04) 12%, transparent 0 88%, rgba(255, 255, 255, 0.04) 0) !important;
+  background-position:
+    0 0,
+    4px 7px,
+    0 0,
+    4px 7px !important;
+  background-size: 8px 14px !important;
+  background-repeat: repeat !important;
+  background-attachment: local !important;
+}
+
+/* ─── Card container (mirrors .z-card) ───────────────────────────────── */
+.theme-zzz.video-card-container {
+  background-color: var(--zzz-bg-card) !important;
+  border-radius: var(--zzz-radius-card) !important;
+  border: var(--zzz-border-width) solid var(--zzz-border) !important;
+  box-shadow: none !important;
+  overflow: hidden !important; /* clips cover image to card radius */
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container--interactive:hover {
+    background-color: var(--zzz-bg-card-hover) !important;
+    border-color: var(--zzz-border-hover) !important;
+    box-shadow: none !important;
+  }
+}
+
+.theme-zzz.video-card-container--interactive:active {
+  background-color: #2d2d2d !important;
+}
+
+/* Inner wrapper */
+.theme-zzz .video-card {
+  border-radius: inherit !important;
+}
+
+/* ─── Cover area (mirrors .z-card__image — no own radius) ────────────── */
+.theme-zzz .group\/cover {
+  border-radius: 0 !important; /* card's overflow clips the top corners */
+  overflow: hidden !important;
+  background-color: var(--zzz-bg-cover) !important;
+}
+
+/*
+ * ─── CRITICAL: LazyPicture fill for staggered aspect-ratios ────────────
+ * LazyPicture renders <picture style="aspect-ratio: 16/9"> as inline style.
+ * When .group/cover is overridden to 1:1 or 4:5, the <picture> must fill it.
+ * The <img> already has object-fit:cover, so it correctly crops the source.
+ */
+.theme-zzz .group\/cover > picture {
+  aspect-ratio: inherit !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Cover hover scale */
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container:hover .group\/cover img {
+    transform: scale(1.04);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: brightness(1.06);
+  }
+}
+
+/* ─── Staggered card heights ──────────────────────────────────────────── */
+.virtual-item:nth-child(3n + 2) .theme-zzz.video-card-container .group\/cover {
+  aspect-ratio: 1 / 1 !important;
+}
+.virtual-item:nth-child(3n) .theme-zzz.video-card-container .group\/cover {
+  aspect-ratio: 4 / 3 !important;
+}
+.virtual-item:nth-child(3n + 1) .theme-zzz.video-card-container .group\/cover {
+  aspect-ratio: 4 / 5 !important;
+}
+
+/* ─── Cover stats: column layout (plays/danmaku/likes stacked, duration at bottom-right) ─ */
+/*
+ * Customizer: flex-direction:column, align-items:flex-end
+ *   top    → .video-card-cover-stats__items (view + danmaku + like, stacked)
+ *   bottom → .video-card-cover-stats__item--duration (amber pill)
+ */
+.theme-zzz .video-card-cover-stats {
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  justify-content: flex-end !important;
+  gap: 3px !important;
+  /* gradient override */
+  --bew-video-card-shadow-gradient: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.5) 55%,
+    transparent 100%
+  ) !important;
+}
+
+/* Stats items (view / danmaku / like): stack vertically, right-aligned */
+.theme-zzz .video-card-cover-stats__items {
+  flex-direction: column !important;
+  align-items: flex-end !important;
+  gap: 2px !important;
+}
+
+/* Duration badge sits below stats (natural order in column flex) */
+.theme-zzz .video-card-cover-stats__item--duration {
+  margin-left: 0 !important;
+  order: 1 !important;
+}
+
+/* Duration badge → amber pill */
+.theme-zzz .video-card-cover-stats__item--duration .video-card-cover-stats__value {
+  background: var(--zzz-badge-inquiry-bg) !important;
+  color: var(--zzz-badge-inquiry-text) !important;
+  padding: 2px 8px !important;
+  border-radius: 5px !important;
+  font-weight: 700;
+  font-size: 0.7em !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════ */
+/* ─── ZZZ INFO SECTION LAYOUT ─────────────────────────────────────────── */
+/*
+ * Reorders the info section to match zenless-ui card structure:
+ *
+ *   [cover image]
+ *   ↕ avatar straddles cover/info boundary (half over cover)
+ *   [author name + thin ring avatar]
+ *   [────── gray separator ──────]
+ *   [video title]
+ *   [tags]
+ *
+ * Implementation:
+ *   1. VideoCardInfo outer div has margin-top:0 (flush with cover)
+ *   2. group/desc has padding-top:0 — no reserved space needed
+ *   3. .video-card-meta uses CSS order:-1 → shows BEFORE title
+ *   4. .video-card-tags uses CSS order:1 → shows AFTER title
+ *   5. Avatar is position:absolute, top:-(avatar-size/2) from .video-card-meta
+ *      → avatar CENTER lands exactly at cover/info boundary (half + half)
+ *      → author name centers in lower half; separator falls below avatar
+ */
+
+/* 1. Remove default margin-top from VideoCardInfo wrapper */
+.theme-zzz .vertical-card-cover + div {
+  margin-top: 0 !important;
+  position: relative;
+  z-index: 2;
+}
+
+/* 2. group/desc: flush with cover bottom — no top padding needed because avatar
+ *    is anchored by its own top offset, not by the meta row's position */
+.theme-zzz .group\/desc {
+  background: var(--zzz-bg-card) !important;
+  padding: 0 10px 10px !important;
+  gap: 0.35rem !important;
+}
+
+/* 3 & 4. CSS order: author section first, title second, tags third */
+.theme-zzz .video-card-meta {
+  order: -1 !important;
+}
+.theme-zzz .video-card-tags {
+  order: 1 !important;
+}
+
+/* ─── Author meta row ─────────────────────────────────────────────────── */
+/*
+ * Height is sized so the author name centers in the avatar's lower-half zone:
+ *   avatar lower half = Y=0 (boundary) to Y=24px (avatar bottom)
+ *   content area      = min-height(32px) - padding-bottom(8px) = 24px
+ *   align-items:center → author name center = 24px/2 = Y=12px ✓ (middle of lower half)
+ */
+.theme-zzz .video-card-meta {
+  position: relative !important;
+  padding-left: calc(var(--zzz-avatar-size) + 16px) !important; /* room for avatar + gap */
+  padding-bottom: 8px !important;
+  padding-top: 0 !important;
+  border-bottom: none !important;
+  align-items: center !important;
+  min-height: 32px !important;
+  gap: 0 !important;
+  color: var(--zzz-text-secondary) !important;
+}
+
+/* Separator — starts at author name x-position, rounded pill caps */
+.theme-zzz .video-card-meta::after {
+  content: "" !important;
+  position: absolute !important;
+  bottom: 0 !important;
+  left: calc(var(--zzz-avatar-size) + 16px) !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: var(--zzz-separator) !important;
+  border-radius: 999px !important;
+}
+
+/*
+ * ─── Avatar: the anchor — center sits exactly at the cover/info boundary ─
+ *
+ * Avatar is the fixed reference. Author name and separator derive from it.
+ *
+ * Coordinate walkthrough (cover-bottom = Y=0, relative to .video-card-meta):
+ *   .group/desc padding-top = 0  → .video-card-meta top = Y=0
+ *   avatar top  = top: -(avatar-size/2) = -24px  → 24px INTO cover
+ *   avatar center = Y=0  ← exactly at cover/info boundary ✓
+ *   avatar bottom = Y=+24px  (inside info section)
+ *
+ *   meta row min-height=32px, padding-bottom=8px, align-items:center:
+ *   content zone = 32-8 = 24px → author name center = Y=12px  (mid lower-half) ✓
+ *
+ *   separator (bottom:0) = Y=32px, 8px below avatar bottom ✓
+ */
+.theme-zzz .video-card-meta > div:first-child {
+  position: absolute !important;
+  left: 6px !important;
+  top: calc(var(--zzz-avatar-size) * -0.5) !important; /* anchor: center at boundary */
+  width: var(--zzz-avatar-size) !important;
+  height: var(--zzz-avatar-size) !important;
+  border-radius: 50% !important;
+  overflow: visible !important; /* must NOT clip — box-shadow ring lives outside */
+  flex-shrink: 0 !important;
+}
+
+/* Avatar <a> tag: fill container + ring */
+.theme-zzz .video-card-meta > div:first-child > a {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  /* Bubble effect — seamless gap ring blends with card bg, no visible border */
+  box-shadow: 0 0 0 3px var(--zzz-bg-card) !important;
+}
+
+/* Avatar picture + img: fill the circle */
+.theme-zzz .video-card-meta > div:first-child picture {
+  aspect-ratio: 1 / 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.theme-zzz .video-card-meta > div:first-child img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+/* Author name text */
+.theme-zzz .video-card-meta .channel-name,
+.theme-zzz .video-card-meta [class*="text-"] {
+  color: var(--zzz-text-secondary) !important;
+}
+
+/* ─── Title ───────────────────────────────────────────────────────────── */
+.theme-zzz .video-card-title a,
+.theme-zzz .video-card-title {
+  color: var(--zzz-text-title) !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container:hover .video-card-title a,
+  .theme-zzz.video-card-container:hover .video-card-title {
+    color: var(--zzz-text-title-hover) !important;
+  }
+}
+
+/* ─── Tags section (below the title) ─────────────────────────────────── */
+.theme-zzz .video-card-tags {
+  margin-top: 2px;
+}
+
+/* ─── Tag badge chips (mirrors .z-tag from zenless-ui tag.scss) ────────── */
+.theme-zzz .video-card-meta__chip {
+  background: var(--zzz-badge-neutral-bg) !important;
+  color: var(--zzz-badge-neutral-text) !important;
+  border: 2px solid var(--zzz-badge-neutral-border) !important;
+  border-radius: 5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7em !important;
+  font-weight: 700;
+  padding-inline: 8px !important;
+  line-height: 1.5 !important;
+}
+
+/* Highlight chips (高赞, 百万播放) → amber */
+.theme-zzz .video-card-tags .video-card-meta__chip[class*="bg-"],
+.theme-zzz .video-card-meta .video-card-meta__chip[class*="bg-"] {
+  background: var(--zzz-badge-inquiry-bg) !important;
+  color: var(--zzz-badge-inquiry-text) !important;
+  border-color: var(--zzz-badge-inquiry-bg) !important;
+}
+
+/* ─── More (⋯) button ─────────────────────────────────────────────────── */
+.theme-zzz .video-card__more-btn {
+  color: var(--zzz-text-secondary) !important;
+}
+
+.theme-zzz .video-card__more-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--zzz-text-title) !important;
+}
+
+/* ─── Skeleton state ──────────────────────────────────────────────────── */
+.theme-zzz.video-card-container--skeleton {
+  background-color: var(--zzz-bg-card) !important;
+  border: var(--zzz-border-width) solid var(--zzz-border) !important;
+}
