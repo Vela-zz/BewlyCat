@@ -28,32 +28,16 @@
 > [!CAUTION]
 > 为了本项目能够在Github中直接被搜索到，项目将脱离BewlyBewly的Fork网络，成为一个独立的项目。但项目基于BewlyBewly是不变的～项目不会移除历史贡献者和原项目信息。
 >
-> B站于2026年1月调整了首页推荐API，请更新至`1.5.6`版本及以上，以适配新的首页推荐，排行榜和分区。
+> B站于2026年1月调整了首页推荐API，请更新至 `1.5.6`版本及以上，以适配新的首页推荐，排行榜和分区。
 
 ## 主要功能异同
 
 ### 新增功能
 
-1. 新增视频卡片、顶栏链接后台打开的能力。
-2. 新增默认播放器样式设置，当播放器样式是默认和宽屏的时候会自动滚动到弹幕框与底部平齐。
-3. 新增用户面板大会员权益领取入口。
-4. 新增首页推荐前进后退的能力。
-5. 新增合集播放自动关闭功能（需要在设置里开启），方便挂合集听歌。
-6. 新增web模式推荐按照点赞/播放比例过滤视频的能力（需要设置里开启）
-7. 参考了`Extension for Bilibili Player`插件的快捷键，支持了其中大部分功能的自定义快捷键。
-8. 音量均衡功能，可以自定义每个UP的音量相比基准音量增减
-9. 记住倍速比例功能，开启后会记住上次倍速
-10. 合集视频随机播放功能
-11. 视频详情页稍后再看外置
-12. 自定义暗色基准色，开启后会根据基准色调整暗黑模式的显示
-13. 新增合集视频保持默认播放模式功能
+1. 从拓展[Blocked Videos by Tags](https://github.com/tjxwork/bilibili_blocked_videos_by_tags) 引入功能：根据用户设置的标签屏蔽视频（如“鬼畜”、“广告”等），并提供了一个抽屉界面来管理这些标签。
+2. 模仿绝区零的绳网视觉效果， 参照[zenless-ui](https://github.com/ChrisChan13/zenless-ui)，修改了首页视频卡片的封面显示方式，推荐关闭视频预览功能以获得最佳体验。新版效果如下。
 
-### 删除功能
-
-1. ~~删除了原插件广东话翻译~~广东话翻译由BewlyBewly插件原作者维护（缺少翻译情况下默认显示英文翻译结果）
-2. 删除了内置字体，减少打包体积（14.4M -> 600K）
-3. 删除了旧版顶栏（减少开发成本），并重构了原项目的顶栏组件（功能无差异）
-4. 删除了部分影响功能正常使用的动画（如抽屉打开关闭的动画）
+   ![1779973878602](image/README/1779973878602.png)
 
 ## ⬇️ 安装
 
@@ -88,7 +72,7 @@
 > 确保您下载了 [extension.zip](https://github.com/keleus/BewlyCat/releases) 并解压缩该文件。
 
 1. 在地址栏输入 `edge://extensions/` 并按回车
-2. 打开 `开发者模式` 并点击 `加载已解压的拓展程序` <br/> <img width="655" alt="image" src="https://user-images.githubusercontent.com/33394391/232246901-e3544c16-bde2-480d-b770-ca5242793963.png">
+2. 打开 `开发者模式` 并点击 `加载已解压的拓展程序` `<br/>` `<img width="655" alt="image" src="https://user-images.githubusercontent.com/33394391/232246901-e3544c16-bde2-480d-b770-ca5242793963.png">`
 3. 在浏览器中加载解压后的扩展文件夹
 
 #### Chrome
@@ -96,7 +80,7 @@
 > 确保您下载了 [extension.zip](https://github.com/keleus/BewlyCat/releases) 并解压缩该文件。
 
 1. 在地址栏输入 `chrome://extensions/` 并按回车
-2. 打开 `开发者模式` 并点击 `加载已解压的拓展程序` <br/> <img width="655" alt="Snipaste_2022-03-27_18-17-04" src="https://user-images.githubusercontent.com/33394391/160276882-13da0484-92c1-47dd-add8-7655c5c2bf1c.png">
+2. 打开 `开发者模式` 并点击 `加载已解压的拓展程序` `<br/>` `<img width="655" alt="Snipaste_2022-03-27_18-17-04" src="https://user-images.githubusercontent.com/33394391/160276882-13da0484-92c1-47dd-add8-7655c5c2bf1c.png">`
 3. 在浏览器中加载解压后的扩展文件夹
 
 </details>
@@ -114,7 +98,7 @@
 - [BewlyBewly](https://github.com/BewlyBewly/BewlyBewly) - 该项目的基础
 - [vitesse-webext](https://github.com/antfu/vitesse-webext) - 该项目使用的模板
 - [UserScripts/bilibiliHome](https://github.com/indefined/UserScripts/tree/master/bilibiliHome),
-[bilibili-app-recommend](https://github.com/magicdawn/bilibili-app-recommend) - 获取访问密钥的参考来源
+  [bilibili-app-recommend](https://github.com/magicdawn/bilibili-app-recommend) - 获取访问密钥的参考来源
 - [Bilibili-Evolved](https://github.com/the1812/Bilibili-Evolved) - 部分功能实现
 - [bilibili-API-collect](https://github.com/SocialSisterYi/bilibili-API-collect)
 

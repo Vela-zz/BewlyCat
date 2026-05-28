@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZZZ Card Theme Customizer</title>
+<style>
+/* ── Reset & base ─────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #111;
+  color: #e0e0e0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Layout ──────────────────────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-columns: 340px 1fr;
+  grid-template-rows: auto 1fr;
+  min-height: 100vh;
+}
+.header {
+  grid-column: 1 / -1;
+  background: #1a1a1f;
+  border-bottom: 1px solid #2a2a35;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.header h1 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f5c14f;
+}
+.header-actions { display: flex; gap: 10px; }
+
+/* ── Sidebar ─────────────────────────────────────────────────────────── */
+.sidebar {
+  background: #16161b;
+  border-right: 1px solid #2a2a35;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f5c14f;
+  padding: 12px 4px 6px;
+  border-bottom: 1px solid #2a2a35;
+  margin-bottom: 4px;
+}
+.section-title:first-child { padding-top: 4px; }
+
+.ctrl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 4px;
+  gap: 8px;
+}
+.ctrl-row label {
+  font-size: 12px;
+  color: #9a9ba3;
+  white-space: nowrap;
+  flex: 1;
+}
+.ctrl-row .val { font-size: 11px; color: #ccc; min-width: 72px; text-align: right; }
+
+/* Color swatch */
+.color-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.color-wrap input[type="color"] {
+  width: 28px; height: 22px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+.color-wrap .hex {
+  font-size: 11px;
+  color: #aaa;
+  font-family: monospace;
+  min-width: 56px;
+}
+
+/* Sliders */
+input[type="range"] {
+  width: 90px;
+  accent-color: #f5c14f;
+}
+
+/* Text inputs */
+input[type="text"].small {
+  background: #222;
+  border: 1px solid #333;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 11px;
+  padding: 3px 6px;
+  width: 120px;
+  font-family: monospace;
+}
+
+/* ── Preview area ─────────────────────────────────────────────────────── */
+.preview-area {
+  overflow: auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+/* ── The mock card grid ───────────────────────────────────────────────── */
+.card-grid {
+  column-count: 3;
+  column-gap: 16px;
+  width: 660px;
+}
+
+/* ── Card mock — replicates BewlyCat .video-card-container.theme-zzz ─── */
+.card {
+  break-inside: avoid;
+  margin-bottom: 16px;
+  --zzz-bg-card:            #222222;
+  --zzz-bg-card-hover:      #2a2a2a;
+  --zzz-bg-cover:           #4b4b4b;
+  --zzz-border:             #000000;
+  --zzz-border-hover:       #333333;
+  --zzz-border-width:       2px;
+  --zzz-separator:          #353535;
+  --zzz-radius-card:        20px 20px 0 20px;
+  --zzz-text-title:         #ffffff;
+  --zzz-text-title-hover:   #55b4e4;
+  --zzz-text-secondary:     #636363;
+  --zzz-avatar-size:        48px;
+  --zzz-avatar-overlap:     24px;
+  --zzz-desc-padding-top:   8px;
+  --zzz-badge-inquiry-bg:   #f5c14f;
+  --zzz-badge-inquiry-text: #18181b;
+  --zzz-badge-neutral-bg:   #1c1c1c;
+  --zzz-badge-neutral-text: #888898;
+  --zzz-badge-neutral-border: #2a2a2a;
+  --zzz-page-bg:            #0d0d0d;
+
+  background: var(--zzz-bg-card);
+  border-radius: var(--zzz-radius-card);
+  border: var(--zzz-border-width) solid var(--zzz-border);
+  overflow: hidden;
+  transition: background 0.2s, border-color 0.2s;
+  cursor: pointer;
+}
+.card:hover {
+  background: var(--zzz-bg-card-hover);
+  border-color: var(--zzz-border-hover);
+}
+.card:hover .card-title {
+  color: var(--zzz-text-title-hover);
+}
+
+/* Cover */
+.card-cover {
+  width: 100%;
+  position: relative;
+  background: var(--zzz-bg-cover);
+  overflow: hidden;
+}
+.card-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s cubic-bezier(.25,.46,.45,.94), filter 0.4s;
+}
+.card:hover .card-cover img {
+  transform: scale(1.04);
+  filter: brightness(1.06);
+}
+.card-cover-gradient {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(0,0,0,.9) 0%, rgba(0,0,0,.5) 55%, transparent 100%);
+  pointer-events: none;
+}
+.card-cover-stats {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+  color: #fff;
+  font-size: 11px;
+}
+.cover-stats-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+.duration-badge {
+  background: var(--zzz-badge-inquiry-bg);
+  color: var(--zzz-badge-inquiry-text);
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-weight: 700;
+  font-size: 0.7em;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.cover-stat { display: flex; align-items: center; gap: 3px; }
+.cover-stat svg { width: 12px; height: 12px; opacity: .8; }
+
+/* Info section */
+.card-desc {
+  background: var(--zzz-bg-card);
+  padding: var(--zzz-desc-padding-top) 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  position: relative;
+}
+
+/* Author meta row */
+.card-meta {
+  order: -1;
+  position: relative;
+  padding-left: calc(var(--zzz-avatar-size) + 16px);
+  padding-right: 10px;
+  padding-top: 0;
+  padding-bottom: 6px;
+  border-bottom: none;
+  display: flex;
+  align-items: flex-end;
+  min-height: 20px;
+  color: var(--zzz-text-secondary);
+  font-size: 12px;
+}
+
+/* Avatar — bottom anchored to separator; top portion overlaps the cover */
+.card-meta::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: calc(var(--zzz-avatar-size) + 16px);
+  right: 0;
+  height: 1px;
+  background: var(--zzz-separator);
+  border-radius: 999px;
+}
+.card-avatar-wrap {
+  position: absolute;
+  left: 6px;
+  bottom: 0;
+  z-index: 1;
+  width: var(--zzz-avatar-size);
+  height: var(--zzz-avatar-size);
+  border-radius: 50%;
+  /* no overflow:hidden here so box-shadow isn't clipped */
+}
+.card-avatar-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  overflow: hidden;
+  /* bubble effect — seamless gap ring blends with card bg */
+  box-shadow: 0 0 0 3px var(--zzz-bg-card);
+}
+.card-avatar-initials {
+  font-size: 17px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Title */
+.card-title {
+  order: 0;
+  color: var(--zzz-text-title);
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  letter-spacing: 0.01em;
+}
+
+/* Tags */
+.card-tags {
+  order: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+.chip {
+  background: var(--zzz-badge-neutral-bg);
+  color: var(--zzz-badge-neutral-text);
+  border: 2px solid var(--zzz-badge-neutral-border);
+  border-radius: 5px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-size: 0.65em;
+  font-weight: 700;
+  padding: 0 8px;
+  line-height: 1.5;
+}
+.chip.highlight {
+  background: var(--zzz-badge-inquiry-bg);
+  color: var(--zzz-badge-inquiry-text);
+  border-color: var(--zzz-badge-inquiry-bg);
+}
+
+/* Page background */
+.preview-area {
+  background-color: var(--zzz-page-bg, #0d0d0d);
+  background-image:
+    linear-gradient(65deg,  rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(65deg,  rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(115deg, rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(115deg, rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0);
+  background-position: 0 0, 4px 7px, 0 0, 4px 7px;
+  background-size: 8px 14px;
+  background-repeat: repeat;
+}
+
+/* Card cover aspect-ratio is applied inline per card (random S/M/L) */
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.btn {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  padding: 7px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: opacity .15s;
+}
+.btn:hover { opacity: .85; }
+.btn-primary { background: #f5c14f; color: #18181b; }
+.btn-secondary { background: #2a2a35; color: #e0e0e0; }
+.btn-danger  { background: #e53535; color: #fff; }
+
+/* ── Export overlay ──────────────────────────────────────────────────── */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+}
+.overlay.open { display: flex; }
+.overlay-box {
+  background: #1a1a1f;
+  border: 1px solid #2a2a35;
+  border-radius: 10px;
+  width: min(780px, 95vw);
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.overlay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid #2a2a35;
+}
+.overlay-header h2 { font-size: 14px; font-weight: 700; color: #f5c14f; }
+.overlay-close { background: none; border: none; color: #888; font-size: 20px; cursor: pointer; line-height: 1; }
+.overlay-body { flex: 1; overflow: auto; padding: 16px 20px; }
+pre#css-output {
+  background: #111;
+  border: 1px solid #2a2a35;
+  border-radius: 6px;
+  padding: 14px;
+  font-size: 12px;
+  line-height: 1.55;
+  color: #c8e6c9;
+  white-space: pre;
+  overflow: auto;
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  max-height: 55vh;
+}
+.overlay-footer {
+  padding: 12px 20px;
+  border-top: 1px solid #2a2a35;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <header class="header">
+    <h1>ZZZ Card Theme Customizer</h1>
+    <div class="header-actions">
+      <button class="btn btn-secondary" onclick="resetDefaults()">Reset defaults</button>
+      <button class="btn btn-secondary" onclick="buildCards()">Shuffle sizes</button>
+      <button class="btn btn-primary"   onclick="openExport()">Export CSS</button>
+    </div>
+  </header>
+
+  <!-- ── Sidebar ────────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+
+    <div class="section-title">Card</div>
+
+    <div class="ctrl-row">
+      <label>Background</label>
+      <div class="color-wrap">
+        <input type="color" id="bg-card" value="#222222" oninput="apply()">
+        <span class="hex" id="bg-card-hex">#222222</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Background (hover)</label>
+      <div class="color-wrap">
+        <input type="color" id="bg-card-hover" value="#2a2a2a" oninput="apply()">
+        <span class="hex" id="bg-card-hover-hex">#2a2a2a</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Border</label>
+      <div class="color-wrap">
+        <input type="color" id="border" value="#000000" oninput="apply()">
+        <span class="hex" id="border-hex">#000000</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Border (hover)</label>
+      <div class="color-wrap">
+        <input type="color" id="border-hover" value="#333333" oninput="apply()">
+        <span class="hex" id="border-hover-hex">#333333</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Card radius</label>
+      <input type="text" class="small" id="radius-card" value="20px 20px 0 20px" oninput="apply()">
+    </div>
+    <div class="ctrl-row">
+      <label>Border thickness</label>
+      <input type="range" id="border-width" min="0" max="8" value="2" oninput="apply()">
+      <span class="val" id="border-width-val">2px</span>
+    </div>
+
+    <div class="section-title">Cover</div>
+
+    <div class="ctrl-row">
+      <label>Cover placeholder bg</label>
+      <div class="color-wrap">
+        <input type="color" id="bg-cover" value="#4b4b4b" oninput="apply()">
+        <span class="hex" id="bg-cover-hex">#4b4b4b</span>
+      </div>
+    </div>
+
+    <div class="section-title">Page background</div>
+    <div class="ctrl-row">
+      <label>Page bg</label>
+      <div class="color-wrap">
+        <input type="color" id="page-bg" value="#0d0d0d" oninput="apply()">
+        <span class="hex" id="page-bg-hex">#0d0d0d</span>
+      </div>
+    </div>
+
+    <div class="section-title">Text</div>
+
+    <div class="ctrl-row">
+      <label>Title color</label>
+      <div class="color-wrap">
+        <input type="color" id="text-title" value="#ffffff" oninput="apply()">
+        <span class="hex" id="text-title-hex">#ffffff</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Title hover color</label>
+      <div class="color-wrap">
+        <input type="color" id="text-title-hover" value="#55b4e4" oninput="apply()">
+        <span class="hex" id="text-title-hover-hex">#55b4e4</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Author / meta color</label>
+      <div class="color-wrap">
+        <input type="color" id="text-secondary" value="#636363" oninput="apply()">
+        <span class="hex" id="text-secondary-hex">#636363</span>
+      </div>
+    </div>
+
+    <div class="section-title">Separator</div>
+
+    <div class="ctrl-row">
+      <label>Divider color</label>
+      <div class="color-wrap">
+        <input type="color" id="separator" value="#353535" oninput="apply()">
+        <span class="hex" id="separator-hex">#353535</span>
+      </div>
+    </div>
+
+    <div class="section-title">Avatar</div>
+
+    <div class="ctrl-row">
+      <label>Avatar size</label>
+      <input type="range" id="avatar-size" min="32" max="72" value="48" oninput="apply()">
+      <span class="val" id="avatar-size-val">48px</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Overlap into cover</label>
+      <input type="range" id="avatar-overlap" min="8" max="36" value="24" oninput="apply()">
+      <span class="val" id="avatar-overlap-val">24px</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Desc padding-top</label>
+      <input type="range" id="desc-padding-top" min="0" max="32" value="8" oninput="apply()">
+      <span class="val" id="desc-padding-top-val">8px</span>
+    </div>
+
+    <div class="section-title">Duration badge</div>
+
+    <div class="ctrl-row">
+      <label>Badge background</label>
+      <div class="color-wrap">
+        <input type="color" id="badge-inquiry-bg" value="#f5c14f" oninput="apply()">
+        <span class="hex" id="badge-inquiry-bg-hex">#f5c14f</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Badge text</label>
+      <div class="color-wrap">
+        <input type="color" id="badge-inquiry-text" value="#18181b" oninput="apply()">
+        <span class="hex" id="badge-inquiry-text-hex">#18181b</span>
+      </div>
+    </div>
+
+    <div class="section-title">Tag chips</div>
+
+    <div class="ctrl-row">
+      <label>Chip background</label>
+      <div class="color-wrap">
+        <input type="color" id="badge-neutral-bg" value="#1c1c1c" oninput="apply()">
+        <span class="hex" id="badge-neutral-bg-hex">#1c1c1c</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Chip text</label>
+      <div class="color-wrap">
+        <input type="color" id="badge-neutral-text" value="#888898" oninput="apply()">
+        <span class="hex" id="badge-neutral-text-hex">#888898</span>
+      </div>
+    </div>
+    <div class="ctrl-row">
+      <label>Chip border</label>
+      <div class="color-wrap">
+        <input type="color" id="badge-neutral-border" value="#2a2a2a" oninput="apply()">
+        <span class="hex" id="badge-neutral-border-hex">#2a2a2a</span>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── Preview ────────────────────────────────────────────────────── -->
+  <main class="preview-area" id="preview-area">
+    <div class="card-grid" id="card-grid">
+      <!-- Cards injected by JS -->
+    </div>
+  </main>
+</div>
+
+<!-- ── Export overlay ─────────────────────────────────────────────────── -->
+<div class="overlay" id="export-overlay">
+  <div class="overlay-box">
+    <div class="overlay-header">
+      <h2>Generated zzz.scss</h2>
+      <button class="overlay-close" onclick="closeExport()">✕</button>
+    </div>
+    <div class="overlay-body">
+      <pre id="css-output"></pre>
+    </div>
+    <div class="overlay-footer">
+      <button class="btn btn-secondary" onclick="closeExport()">Close</button>
+      <button class="btn btn-primary"   onclick="copyCSS()">Copy to clipboard</button>
+      <button class="btn btn-primary"   onclick="downloadCSS()">Download zzz.scss</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── Sample data for 3 cards ─────────────────────────────────────────── */
+const CARDS = [
+  /* — row 1: 16:9, 1:1, 4:5 — */
+  {
+    title: "【绝区零】最强防御队阵容详解与实战演示！零号空洞通关技巧",
+    author: "电玩情报局",
+    avatarColor: '#b03a2e',
+    avatarInitial: '电',
+    coverImg: "https://picsum.photos/seed/zzz1/400/225",
+    duration: "12:34",
+    plays: "256万",
+    likes: "4.2万",
+    tags: ["百万播放", "游戏攻略"],
+    highlight: true,
+  },
+  {
+    title: "《绝区零》角色强度排行 — 版本最强阵容前瞻",
+    author: "原神老舔",
+    avatarColor: '#1a5f8a',
+    avatarInitial: '原',
+    coverImg: "https://picsum.photos/seed/zzz2/400/400",
+    duration: "8:17",
+    plays: "89万",
+    likes: "1.1万",
+    tags: ["角色攻略"],
+    highlight: false,
+  },
+  {
+    title: "绝区零新赛季开荒完全指南 — 资源分配优先级",
+    author: "米游社UP主",
+    avatarColor: '#1a6b3c',
+    avatarInitial: '米',
+    coverImg: "https://picsum.photos/seed/zzz3/400/320",
+    duration: "23:05",
+    plays: "42万",
+    likes: "8800",
+    tags: ["高赞", "新手向"],
+    highlight: true,
+  },
+  /* — row 2: 16:9, 1:1, 4:5 — */
+  {
+    title: "魔神松女凶心民局长路线速刷指南",
+    author: "神小万",
+    avatarColor: '#5c2d8a',
+    avatarInitial: '神',
+    coverImg: "https://picsum.photos/seed/zzz4/400/225",
+    duration: "6:02",
+    plays: "31万",
+    likes: "5600",
+    tags: ["新手向"],
+    highlight: false,
+  },
+  {
+    title: "公子双抛流程解析！最强凶队部署与实战技巧完整拆解",
+    author: "ZZZ战报频道",
+    avatarColor: '#7a3a1a',
+    avatarInitial: 'Z',
+    coverImg: "https://picsum.photos/seed/zzz5/400/400",
+    duration: "15:48",
+    plays: "178万",
+    likes: "2.9万",
+    tags: ["百万播放", "高赞", "角色攻略"],
+    highlight: true,
+  },
+  {
+    title: "非常简单的入门语音",
+    author: "小虎主播",
+    avatarColor: '#1a3a6b',
+    avatarInitial: '小',
+    coverImg: "https://picsum.photos/seed/zzz6/400/320",
+    duration: "3:11",
+    plays: "12万",
+    likes: "2300",
+    tags: [],
+    highlight: false,
+  },
+  /* — row 3: 16:9, 1:1, 4:5 — */
+  {
+    title: "绝区零 1.6 版本新内容前瞻 — 新中克、新地图、限时活动一览",
+    author: "氪存玩家大本营",
+    avatarColor: '#1a6b5a',
+    avatarInitial: '氪',
+    coverImg: "https://picsum.photos/seed/zzz7/400/225",
+    duration: "18:22",
+    plays: "320万",
+    likes: "5.1万",
+    tags: ["百万播放", "版本前瞻"],
+    highlight: true,
+  },
+  {
+    title: "贝尔塔详解！最强火属性攻支5星单抽回本分析",
+    author: "火属性熟悉占",
+    avatarColor: '#8a2020',
+    avatarInitial: '火',
+    coverImg: "https://picsum.photos/seed/zzz8/400/400",
+    duration: "10:55",
+    plays: "64万",
+    likes: "9200",
+    tags: ["角色攻略"],
+    highlight: false,
+  },
+  {
+    title: "我用了一周的香油研究查王咖啡，结果出乎意料…",
+    author: "咖啡评测局",
+    avatarColor: '#3a2a1a',
+    avatarInitial: '咖',
+    coverImg: "https://picsum.photos/seed/zzz9/400/320",
+    duration: "31:07",
+    plays: "55万",
+    likes: "7700",
+    tags: ["高赞", "民生向"],
+    highlight: true,
+  },
+];
+
+/* ── Build mock cards ────────────────────────────────────────────────── */
+const ASPECTS = ['16/9', '1/1', '4/5'];
+function buildCards() {
+  const grid = document.getElementById('card-grid');
+  grid.innerHTML = '';
+  CARDS.forEach((c, i) => {
+    const aspect = ASPECTS[Math.floor(Math.random() * ASPECTS.length)];
+    grid.insertAdjacentHTML('beforeend', `
+      <div class="card">
+        <div class="card-cover" style="aspect-ratio:${aspect}">
+          <img src="${c.coverImg}" alt="">
+          <div class="card-cover-gradient"></div>
+          <div class="card-cover-stats">
+            <div class="cover-stats-right">
+              <div class="cover-stat">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zm0 12.5a5 5 0 110-10 5 5 0 010 10zm0-8a3 3 0 100 6 3 3 0 000-6z"/></svg>
+                ${c.plays}
+              </div>
+              <div class="cover-stat">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/></svg>
+                ${c.likes}
+              </div>
+            </div>
+            <span class="duration-badge">${c.duration}</span>
+          </div>
+        </div>
+        <div class="card-desc">
+          <div class="card-meta">
+            <div class="card-avatar-wrap">
+              <div class="card-avatar-link" style="background:${c.avatarColor}">
+                <span class="card-avatar-initials">${c.avatarInitial}</span>
+              </div>
+            </div>
+            ${c.author}
+          </div>
+          <div class="card-title">${c.title}</div>
+          <div class="card-tags">
+            ${c.tags.map((t,j) => `<span class="chip ${(j===0 && c.highlight)?'highlight':''}">${t}</span>`).join('')}
+          </div>
+        </div>
+      </div>
+    `);
+  });
+}
+
+/* ── Read all control values → return variables object ──────────────── */
+function getVars() {
+  const v = id => document.getElementById(id).value;
+  const n = id => parseInt(document.getElementById(id).value, 10);
+  return {
+    bgCard:              v('bg-card'),
+    bgCardHover:         v('bg-card-hover'),
+    bgCover:             v('bg-cover'),
+    border:              v('border'),
+    borderHover:         v('border-hover'),
+    borderWidth:         n('border-width'),
+    separator:           v('separator'),
+    radiusCard:          v('radius-card'),
+    textTitle:           v('text-title'),
+    textTitleHover:      v('text-title-hover'),
+    textSecondary:       v('text-secondary'),
+    avatarSize:          n('avatar-size'),
+    avatarOverlap:       n('avatar-overlap'),
+    descPaddingTop:      n('desc-padding-top'),
+    badgeInquiryBg:      v('badge-inquiry-bg'),
+    badgeInquiryText:    v('badge-inquiry-text'),
+    badgeNeutralBg:      v('badge-neutral-bg'),
+    badgeNeutralText:    v('badge-neutral-text'),
+    badgeNeutralBorder:  v('badge-neutral-border'),
+    pageBg:              v('page-bg'),
+  };
+}
+
+/* ── Apply vars to preview cards ─────────────────────────────────────── */
+function apply() {
+  const vars = getVars();
+
+  /* Update hex labels & range labels */
+  const colorIds = ['bg-card','bg-card-hover','bg-cover','border','border-hover',
+    'separator','text-title','text-title-hover','text-secondary','badge-inquiry-bg','badge-inquiry-text',
+    'badge-neutral-bg','badge-neutral-text','badge-neutral-border','page-bg'];
+  colorIds.forEach(id => {
+    const hex = document.getElementById(id).value;
+    const label = document.getElementById(id + '-hex');
+    if (label) label.textContent = hex;
+  });
+  ['avatar-size','avatar-overlap','desc-padding-top','border-width'].forEach(id => {
+    const val = document.getElementById(id).value;
+    const lbl = document.getElementById(id + '-val');
+    if (lbl) lbl.textContent = val + 'px';
+  });
+
+  /* Apply to each card */
+  document.querySelectorAll('.card').forEach(card => {
+    card.style.setProperty('--zzz-bg-card',           vars.bgCard);
+    card.style.setProperty('--zzz-bg-card-hover',     vars.bgCardHover);
+    card.style.setProperty('--zzz-bg-cover',          vars.bgCover);
+    card.style.setProperty('--zzz-border',            vars.border);
+    card.style.setProperty('--zzz-border-hover',      vars.borderHover);
+    card.style.setProperty('--zzz-border-width',      vars.borderWidth + 'px');
+    card.style.setProperty('--zzz-separator',         vars.separator);
+    card.style.setProperty('--zzz-radius-card',       vars.radiusCard);
+    card.style.setProperty('--zzz-text-title',        vars.textTitle);
+    card.style.setProperty('--zzz-text-title-hover',  vars.textTitleHover);
+    card.style.setProperty('--zzz-text-secondary',    vars.textSecondary);
+    card.style.setProperty('--zzz-avatar-size',       vars.avatarSize + 'px');
+    card.style.setProperty('--zzz-avatar-overlap',    vars.avatarOverlap + 'px');
+    card.style.setProperty('--zzz-desc-padding-top',  vars.descPaddingTop + 'px');
+    card.style.setProperty('--zzz-badge-inquiry-bg',  vars.badgeInquiryBg);
+    card.style.setProperty('--zzz-badge-inquiry-text',vars.badgeInquiryText);
+    card.style.setProperty('--zzz-badge-neutral-bg',  vars.badgeNeutralBg);
+    card.style.setProperty('--zzz-badge-neutral-text',vars.badgeNeutralText);
+    card.style.setProperty('--zzz-badge-neutral-border', vars.badgeNeutralBorder);
+  });
+
+  /* Update page background color */
+  const preview = document.getElementById('preview-area');
+  preview.style.setProperty('--zzz-page-bg', vars.pageBg);
+  preview.style.backgroundColor = vars.pageBg;
+}
+
+/* ── Reset to original defaults ─────────────────────────────────────── */
+const DEFAULTS = {
+  'bg-card': '#222222', 'bg-card-hover': '#2a2a2a', 'bg-cover': '#4b4b4b',
+  'border': '#000000', 'border-hover': '#333333', 'border-width': 2, 'separator': '#353535',
+  'radius-card': '20px 20px 0 20px',
+  'text-title': '#ffffff', 'text-title-hover': '#55b4e4', 'text-secondary': '#636363',
+  'avatar-size': 48, 'avatar-overlap': 24, 'desc-padding-top': 8,
+  'badge-inquiry-bg': '#f5c14f', 'badge-inquiry-text': '#18181b',
+  'badge-neutral-bg': '#1c1c1c', 'badge-neutral-text': '#888898',
+  'badge-neutral-border': '#2a2a2a',
+  'page-bg': '#0d0d0d',
+};
+
+function resetDefaults() {
+  Object.entries(DEFAULTS).forEach(([id, val]) => {
+    document.getElementById(id).value = val;
+  });
+  apply();
+}
+
+/* ── Generate zzz.scss from current values ───────────────────────────── */
+function generateCSS() {
+  const v = getVars();
+  /* Compute avatar top offset: -(overlap + avatarSize/2) */
+  const avatarTop = -(v.avatarOverlap + v.avatarSize / 2);
+
+  return `/**
+ * Zenless Zone Zero (ZZZ) Video Card Theme
+ *
+ * Based on the local zenless-ui clone (packages/card/card.scss + var.scss).
+ *
+ * Layout (top → bottom):
+ *   1. Cover / video snapshot
+ *   2. Author avatar — half floats OVER the cover (absolute-positioned)
+ *      Author name   — sits beside the avatar, in the info section
+ *   3. ──── gray separator ────
+ *   4. Video title
+ *   5. Tags
+ */
+
+/* ─── CSS tokens ──────────────────────────────────────────────────────── */
+.theme-zzz {
+  --zzz-bg-card:        ${v.bgCard};
+  --zzz-bg-card-hover:  ${v.bgCardHover};
+  --zzz-bg-cover:       ${v.bgCover};
+  --zzz-border:         ${v.border};
+  --zzz-border-hover:   ${v.borderHover};
+  --zzz-border-width:   ${v.borderWidth}px;
+  --zzz-separator:      ${v.separator};
+
+  --zzz-radius-card:    ${v.radiusCard};
+
+  --zzz-text-title:     ${v.textTitle};
+  --zzz-text-secondary: ${v.textSecondary};
+  --zzz-text-content:   #b4b4b4;
+  --zzz-text-title-hover: ${v.textTitleHover};
+
+  --zzz-avatar-size:    ${v.avatarSize}px;
+
+  /* Badge palette */
+  --zzz-badge-inquiry-bg:     ${v.badgeInquiryBg};
+  --zzz-badge-inquiry-text:   ${v.badgeInquiryText};
+  --zzz-badge-fire-bg:        #ff5522;
+  --zzz-badge-fire-text:      #ffffff;
+  --zzz-badge-electric-bg:    #2eb6ff;
+  --zzz-badge-electric-text:  #ffffff;
+  --zzz-badge-ether-bg:       #fe427e;
+  --zzz-badge-ether-text:     #ffffff;
+  --zzz-badge-neutral-bg:     ${v.badgeNeutralBg};
+  --zzz-badge-neutral-text:   ${v.badgeNeutralText};
+  --zzz-badge-neutral-border: ${v.badgeNeutralBorder};
+}
+
+/* ─── Page background ─────────────────────────────────────────────────── */
+.video-card-grid-container:has(.theme-zzz) {
+  background-color: ${v.pageBg} !important;
+  background-image:
+    linear-gradient(65deg,  rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(65deg,  rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(115deg, rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0),
+    linear-gradient(115deg, rgba(255,255,255,0.04) 12%, transparent 0 88%, rgba(255,255,255,0.04) 0) !important;
+  background-position: 0 0, 4px 7px, 0 0, 4px 7px !important;
+  background-size: 8px 14px !important;
+  background-repeat: repeat !important;
+}
+
+/* ─── Card container ─────────────────────────────────────────────────── */
+.theme-zzz.video-card-container {
+  background-color: var(--zzz-bg-card) !important;
+  border-radius: var(--zzz-radius-card) !important;
+  border: var(--zzz-border-width) solid var(--zzz-border) !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container--interactive:hover {
+    background-color: var(--zzz-bg-card-hover) !important;
+    border-color: var(--zzz-border-hover) !important;
+    box-shadow: none !important;
+  }
+}
+
+.theme-zzz.video-card-container--interactive:active {
+  background-color: #2d2d2d !important;
+}
+
+.theme-zzz .video-card {
+  border-radius: inherit !important;
+}
+
+/* ─── Cover ───────────────────────────────────────────────────────────── */
+.theme-zzz .group\\/cover {
+  border-radius: 0 !important;
+  overflow: hidden !important;
+  background-color: var(--zzz-bg-cover) !important;
+}
+
+.theme-zzz .group\\/cover > picture {
+  aspect-ratio: inherit !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container:hover .group\\/cover img {
+    transform: scale(1.04);
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    filter: brightness(1.06);
+  }
+}
+
+/* ─── Staggered card heights ─────────────────────────────────────────── */
+.virtual-item:nth-child(3n+2) .theme-zzz.video-card-container .group\\/cover {
+  aspect-ratio: 1 / 1 !important;
+}
+.virtual-item:nth-child(3n) .theme-zzz.video-card-container .group\\/cover {
+  aspect-ratio: 4 / 5 !important;
+}
+
+/* ─── Cover stats gradient ───────────────────────────────────────────── */
+.theme-zzz .video-card-cover-stats {
+  --bew-video-card-shadow-gradient: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.90) 0%,
+    rgba(0, 0, 0, 0.50) 55%,
+    transparent 100%
+  ) !important;
+}
+
+.theme-zzz .video-card-cover-stats__item--duration .video-card-cover-stats__value {
+  background: var(--zzz-badge-inquiry-bg) !important;
+  color: var(--zzz-badge-inquiry-text) !important;
+  padding: 2px 8px !important;
+  border-radius: 5px !important;
+  font-weight: 700;
+  font-size: 0.7em !important;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ─── Info section layout ────────────────────────────────────────────── */
+.theme-zzz .vertical-card-cover + div {
+  margin-top: 0 !important;
+  position: relative;
+  z-index: 2;
+}
+
+.theme-zzz .group\\/desc {
+  background: var(--zzz-bg-card) !important;
+  padding: ${v.descPaddingTop}px 10px 10px !important;
+  gap: 0.35rem !important;
+}
+
+.theme-zzz .video-card-meta { order: -1 !important; }
+.theme-zzz .video-card-tags { order:  1 !important; }
+
+/* ─── Author meta row ────────────────────────────────────────────────── */
+.theme-zzz .video-card-meta {
+  position: relative !important;
+  padding-left: 58px !important;
+  padding-bottom: 8px !important;
+  padding-top: 4px !important;
+  border-bottom: 1px solid var(--zzz-separator) !important;
+  align-items: center !important;
+  min-height: 28px !important;
+  gap: 0 !important;
+  color: var(--zzz-text-secondary) !important;
+}
+
+/* Avatar container */
+.theme-zzz .video-card-meta > div:first-child {
+  position: absolute !important;
+  left: 6px !important;
+  top: ${avatarTop}px !important;
+  width: var(--zzz-avatar-size) !important;
+  height: var(--zzz-avatar-size) !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+}
+
+/* Avatar link: ring effect */
+.theme-zzz .video-card-meta > div:first-child > a {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  box-shadow: 0 0 0 3px var(--zzz-bg-card) !important;
+}
+
+.theme-zzz .video-card-meta > div:first-child picture {
+  aspect-ratio: 1 / 1 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.theme-zzz .video-card-meta > div:first-child img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.theme-zzz .video-card-meta .channel-name,
+.theme-zzz .video-card-meta [class*="text-"] {
+  color: var(--zzz-text-secondary) !important;
+}
+
+/* ─── Title ──────────────────────────────────────────────────────────── */
+.theme-zzz .video-card-title a,
+.theme-zzz .video-card-title {
+  color: var(--zzz-text-title) !important;
+  font-weight: 800 !important;
+  font-style: normal !important;
+  letter-spacing: 0.01em;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .theme-zzz.video-card-container:hover .video-card-title a,
+  .theme-zzz.video-card-container:hover .video-card-title {
+    color: var(--zzz-text-title-hover) !important;
+  }
+}
+
+/* ─── Tags ───────────────────────────────────────────────────────────── */
+.theme-zzz .video-card-tags {
+  margin-top: 2px;
+}
+
+.theme-zzz .video-card-meta__chip {
+  background: var(--zzz-badge-neutral-bg) !important;
+  color: var(--zzz-badge-neutral-text) !important;
+  border: 2px solid var(--zzz-badge-neutral-border) !important;
+  border-radius: 5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7em !important;
+  font-weight: 700;
+  padding-inline: 8px !important;
+  line-height: 1.5 !important;
+}
+
+.theme-zzz .video-card-tags .video-card-meta__chip[class*="bg-"],
+.theme-zzz .video-card-meta .video-card-meta__chip[class*="bg-"] {
+  background: var(--zzz-badge-inquiry-bg) !important;
+  color: var(--zzz-badge-inquiry-text) !important;
+  border-color: var(--zzz-badge-inquiry-bg) !important;
+}
+
+/* ─── More button ────────────────────────────────────────────────────── */
+.theme-zzz .video-card__more-btn {
+  color: var(--zzz-text-secondary) !important;
+}
+
+.theme-zzz .video-card__more-btn:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  color: var(--zzz-text-title) !important;
+}
+
+/* ─── Skeleton ───────────────────────────────────────────────────────── */
+.theme-zzz.video-card-container--skeleton {
+  background-color: var(--zzz-bg-card) !important;
+  border: var(--zzz-border-width) solid var(--zzz-border) !important;
+}
+`;
+}
+
+/* ── Export overlay ──────────────────────────────────────────────────── */
+function openExport() {
+  document.getElementById('css-output').textContent = generateCSS();
+  document.getElementById('export-overlay').classList.add('open');
+}
+function closeExport() {
+  document.getElementById('export-overlay').classList.remove('open');
+}
+function copyCSS() {
+  navigator.clipboard.writeText(generateCSS()).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy to clipboard', 1800);
+  });
+}
+function downloadCSS() {
+  const blob = new Blob([generateCSS()], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'zzz.scss';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* Close overlay on backdrop click */
+document.getElementById('export-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeExport();
+});
+
+/* ── Init ─────────────────────────────────────────────────────────────── */
+buildCards();
+apply();
+</script>
+</body>
+</html>
