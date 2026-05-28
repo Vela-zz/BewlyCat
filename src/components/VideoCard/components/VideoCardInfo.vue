@@ -230,9 +230,36 @@ const isModernLikeLayout = computed(() => props.layout === 'modern' || props.lay
           </div>
         </div>
 
-        <!-- Modern layout with hideAuthor: Tags directly under title -->
+        <!-- Modern layout: Compact author info -->
         <div
-          v-if="layout === 'modern' && hideAuthor && (primaryTags.length || highlightTags.length || video.publishedTimestamp || video.capsuleText || video.type === 'vertical' || video.type === 'bangumi')"
+          v-if="layout === 'modern' && !hideAuthor"
+          class="video-card-meta"
+          flex="~ gap-2 items-center"
+          w="full"
+        >
+          <VideoCardAuthorAvatar
+            v-if="video.author"
+            :author="video.author"
+            :is-live="video.liveStatus === 1"
+            compact
+          />
+
+          <div flex="~ col" w="full">
+            <div
+              v-if="video.author"
+              flex="~ items-center gap-2"
+              text="$bew-text-2"
+              :class="authorFontSizeClass"
+            >
+              <VideoCardAuthorName :author="video.author" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Modern layout: Tags (unified for both hideAuthor and !hideAuthor) -->
+        <div
+          v-if="layout === 'modern' && (primaryTags.length || highlightTags.length || video.publishedTimestamp || video.capsuleText || video.type === 'vertical' || video.type === 'bangumi')"
+          class="video-card-tags"
           flex="~ items-center gap-2 wrap"
           :class="metaFontSizeClass"
         >
@@ -282,85 +309,6 @@ const isModernLikeLayout = computed(() => props.layout === 'modern' || props.lay
             <div v-if="video.type === 'vertical'" i-mingcute:cellphone-2-line />
             <div v-else-if="video.type === 'bangumi'" i-mingcute:movie-line />
           </span>
-        </div>
-
-        <!-- Modern layout: Compact author info -->
-        <div
-          v-if="layout === 'modern' && !hideAuthor"
-          class="video-card-meta"
-          flex="~ gap-2 items-center"
-          w="full"
-        >
-          <VideoCardAuthorAvatar
-            v-if="video.author"
-            :author="video.author"
-            :is-live="video.liveStatus === 1"
-            compact
-          />
-
-          <div flex="~ col gap-1" w="full">
-            <div
-              v-if="video.author"
-              flex="~ items-center gap-2"
-              text="$bew-text-2"
-              :class="authorFontSizeClass"
-            >
-              <VideoCardAuthorName :author="video.author" />
-            </div>
-
-            <div
-              v-if="primaryTags.length || highlightTags.length || video.publishedTimestamp || video.capsuleText || video.type === 'vertical' || video.type === 'bangumi'"
-              flex="~ items-center gap-2 wrap"
-              :class="metaFontSizeClass"
-            >
-              <span
-                v-for="primaryTag in primaryTags"
-                :key="`primary-${primaryTag}`"
-                class="video-card-meta__chip"
-                text="$bew-theme-color"
-                p="x-2"
-                lh-6
-                rounded="$bew-radius"
-                bg="$bew-theme-color-20"
-              >
-                {{ primaryTag }}
-              </span>
-
-              <span
-                v-for="extraTag in highlightTags"
-                :key="`highlight-${extraTag}`"
-                class="video-card-meta__chip"
-                text="$bew-theme-color"
-                p="x-2"
-                lh-6
-                rounded="$bew-radius"
-                bg="$bew-theme-color-20"
-              >
-                {{ extraTag }}
-              </span>
-
-              <span
-                v-if="video.publishedTimestamp || video.capsuleText"
-                class="video-card-meta__chip"
-                bg="$bew-fill-1"
-                p="x-2"
-                lh-6
-                rounded="$bew-radius"
-                text="$bew-text-3"
-              >
-                {{ video.publishedTimestamp ? calcTimeSince(video.publishedTimestamp * 1000) : video.capsuleText?.trim() }}
-              </span>
-
-              <span
-                v-if="video.type === 'vertical' || video.type === 'bangumi'"
-                text="$bew-text-2"
-                grid="~ place-items-center"
-              >
-                <div v-if="video.type === 'vertical'" i-mingcute:cellphone-2-line />
-                <div v-else-if="video.type === 'bangumi'" i-mingcute:movie-line />
-              </span>
-            </div>
-          </div>
         </div>
 
         <!-- Old layout: Traditional info display -->
